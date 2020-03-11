@@ -1,5 +1,5 @@
 /**
- * Global config variables for madVR remote HTML v0.007
+ * Global config variables for madVR JS remote v0.007
  */
 
 /**
