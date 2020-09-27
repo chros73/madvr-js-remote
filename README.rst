@@ -38,9 +38,7 @@ It's also really easy:
 Issues
 ------
 
-It can only send keystrokes to the foreground application! So beware that MPC-BE/HC is in the foreground when you use it.
-
-(There's no check in ``sendkeys.vbs` scripts` whether it is MPC-HC/BE or not, because i tried to implement it and it worked, but it was so slow, that the whole thing became unusable).
+It can only send keystrokes to the foreground application, so MPC-BE/HC will be set to the active window.
 
 Forum
 -----
