@@ -33,7 +33,7 @@ Adding new buttons
 It's also really easy:
 
 - add new keyboard shortcut(s) in madVR for predefined properties or your profiles (shouldn't conflict with the built-in keys in the player)
-- add them into ``madvr-config.js`` in ``webroot`` directory (``id`` field must be unique accross the buttons)
+- add them into ``madvr-config.js`` in ``webroot`` directory (``id`` fields must be unique accross the whole config)
 
 Issues
 ------

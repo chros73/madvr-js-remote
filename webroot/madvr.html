@@ -1,4 +1,4 @@
-<!-- madVR JS remote v0.007 -->
+<!-- madVR JS remote v0.010 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,26 +17,55 @@
             background: #E28E0E;
         }
 
-        .header {
-            color: darkgray;
-            text-shadow: 0px 1px 1px black;
-            border: 1px solid #DC6E00;
-            background: #DC6E00;
+        .page ul {
+            list-style: none;
+            display: table;
+            table-layout: fixed;
+            width: 100%;
+            padding: 0;
+            margin: 0;
         }
 
-        .header h1 {
-            font-size: 1.5em;
+        .page li {
+            display: table-cell;
+            width: auto;
+            margin: 0;
+            border: 1px solid #BBBBBB;
+            border-bottom-width: 0;
+            border-radius: 10px 30px 0 0;
+            text-shadow: 1px 1px 0 #222222;
+            box-shadow: 0px 0px 10px rgba(0,0,0,.5);
+            transition: .2s;
+        }
+
+        .page a {
+            display: block;
+            padding: 0.24em 0.1em;
             text-align: center;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            margin: 0.4em 0em;
-            padding: 0em;
+            text-decoration: none;
+            color: darkgray;
+            background: #DC6E00;
+            border-radius: 10px 30px 0 0;
+            transition: .2s;
+        }
+
+        .page a:hover {
+            background: #EC6E00;
         }
 
         #content {
+            clear: both;
             color: whitesmoke;
-            padding: 0em 0.6em;
+            padding: 0.2em 0.6em 0em 0.6em;
             background: #E28E0E;
+        }
+
+        #content > .tab-content:target ~ .tab-content:last-child, #content > .tab-content {
+            display: none;
+        }
+
+        #content > :last-child, #content > .tab-content:target {
+            display: block;
         }
 
         .row {
@@ -67,12 +96,12 @@
         }
 
         .active {
-            background: #3CB0FD;
-            background-image: -webkit-linear-gradient(top, #3CB0FD, #3498DB);
-            background-image: -moz-linear-gradient(top, #3CB0FD, #3498DB);
-            background-image: -ms-linear-gradient(top, #3CB0FD, #3498DB);
-            background-image: -o-linear-gradient(top, #3CB0FD, #3498DB);
-            background-image: linear-gradient(to bottom, #3CB0FD, #3498DB);
+            background: #2980B9;
+            background-image: -webkit-linear-gradient(top, #2980B9, #3498DB);
+            background-image: -moz-linear-gradient(top, #2980B9, #3498DB);
+            background-image: -ms-linear-gradient(top, #2980B9, #3498DB);
+            background-image: -o-linear-gradient(top, #2980B9, #3498DB);
+            background-image: linear-gradient(to bottom, #2980B9, #3498DB);
         }
     </style>
 
@@ -96,21 +125,35 @@
          * @return void
          */
         function generateButtons() {
-            buttonsHtml = '';
+            tabsHtml = '';
+            contentHtml = '';
 
-            for (i = 0; i < mButtons.length; i++) {
-                buttonsHtml += '<div class="row">';
-                var row = mButtons[i].row;
+            // Go through tabs
+            for (h = 0; h < mButtons.length; h++) {
+                var tab = mButtons[h];
+                var rows = tab.rows;
+                tabsHtml += '<li><a href="#' + tab.id + '">' + tab.label + '</a></li>';
+                contentHtml += '<div id="' + tab.id + '" class="tab-content">';
 
-                for (j = 0; j < row.length; j++) {
-                    var button = row[j].button;
-                    buttonsHtml += '<div id="' + button[0].id + '" class="btn">' + button[0].label + '</div>';
+                // Go through rows inside a tab
+                for (i = 0; i < rows.length; i++) {
+                    var row = rows[i];
+                    contentHtml += '<div class="row">';
+
+                    // Go through buttons inside a row
+                    for (j = 0; j < row.length; j++) {
+                        var button = row[j];
+                        contentHtml += '<div id="' + button.id + '" class="btn" data-key="' + encodeURIComponent(button.key) + '">' + button.label + '</div>';
+                    }
+
+                    contentHtml += '</div>';
                 }
 
-                buttonsHtml += '</div>';
+                contentHtml += '</div>';
             }
 
-            document.getElementById('content').innerHTML = buttonsHtml;
+            document.getElementById('tabs').innerHTML = tabsHtml;
+            document.getElementById('content').innerHTML = contentHtml;
         }
 
         /**
@@ -129,33 +172,9 @@
                     this.className += ' active';
 
                     // Send keyboard shortcut to server
-                    var key = getButtonPropertyById(this.id, 'key');
-                    sendRequest(this, scriptURI + '?' + encodeURIComponent(key));
+                    sendRequest(this, scriptURI + '?' + this.dataset.key);
                 }, false);
             }
-        }
-
-        /**
-         * Get value of property of a button based on its Id
-         *
-         * @param string    id      Id of a button
-         * @param string    field   Name of a property
-         * @return string
-         */
-        function getButtonPropertyById(id, field) {
-            for (i = 0; i < mButtons.length; i++) {
-                var row = mButtons[i].row;
-
-                for (j = 0; j < row.length; j++) {
-                    var button = row[j].button;
-
-                    if (button[0].id == id) {
-                        return button[0][field];
-                    }
-                }
-            }
-
-            return '';
         }
 
         /**
@@ -203,12 +222,8 @@
 
 <body>
     <div class="page">
-        <div class="header">
-            <h1>MadVR Remote</h1>
-        </div>
-
+        <ul id="tabs"></ul>
         <div id="content"></div>
-
     </div>
 </body>
 </html>
