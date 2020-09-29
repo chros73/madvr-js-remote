@@ -28,12 +28,12 @@ It's really easy:
 - try it out from a different computer or smartphone (modify the IP/port): ``http://192.168.1.6:13579/madvr.html``
 
 Adding new buttons
-------------------
+--------------------------
 
 It's also really easy:
 
 - add new keyboard shortcut(s) in madVR for predefined properties or your profiles (shouldn't conflict with the built-in keys in the player)
-- add them into ``madvr-config.js`` in ``webroot`` directory (``id`` fields must be unique accross the whole config)
+- add them into ``madvr-config.js`` in ``webroot`` directory (custom button ``color`` can also be set)
 
 Issues
 ------

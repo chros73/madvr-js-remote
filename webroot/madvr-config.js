@@ -1,5 +1,5 @@
 /**
- * Global config variables for madVR JS remote v0.010
+ * Global config variables for madVR JS remote v0.013
  */
 
 /**
@@ -18,53 +18,51 @@ var scriptURI = 'sendkeys.vbs';
  */
 var mButtons = [
     {
-        "id": "main",
         "label": "Main",
         "rows": [
             [
-                {"id": "sourcelevel",   "label": "sLevel",  "key": "^+%i"},
-                {"id": "outputlevel",   "label": "oLevel",  "key": "^+%y"},
+                {"label": "sLevel",  "key": "^+%i", "color": "#E67300"},
+                {"label": "oLevel",  "key": "^+%y"},
             ],
             [
-                {"id": "threedlut",     "label": "3DLUT",   "key": "^+3"},
-                {"id": "threedluts",    "label": "3DLUTs",  "key": "^+%3"},
+                {"label": "3DLUT",   "key": "^+3",  "color": "#2Eb82E"},
+                {"label": "3DLUTs",  "key": "^+%3"},
             ],
             [
-                {"id": "onscreend",     "label": "OSD",     "key": "^j"},
-                {"id": "resetstats",    "label": "rStats",  "key": "^r"},
+                {"label": "OSD",     "key": "^j",   "color": "#005CE6"},
+                {"label": "rStats",  "key": "^r",   "color": "#E60000"},
             ],
             [
-                {"id": "madvrdtm",      "label": "DTM",     "key": "^+%4"},
-                {"id": "passthrough",   "label": "PTH",     "key": "^+%5"},
+                {"label": "DTM",     "key": "^+%4", "color": "#E64D00"},
+                {"label": "PTH",     "key": "^+%5"},
             ],
             [
-                {"id": "compenson",     "label": "CompOn",  "key": "^+%8"},
-                {"id": "compensoff",    "label": "NoComp",  "key": "^+%9"},
+                {"label": "CompOn",  "key": "^+%8"},
+                {"label": "NoComp",  "key": "^+%9"},
             ],
             [
-                {"id": "180p25",        "label": "1080p",   "key": "^+%h"},
-                {"id": "default",       "label": "Default", "key": "^+%j"},
-                {"id": "720p25",        "label": "720p",    "key": "^+%k"},
+                {"label": "1080p",   "key": "^+%h"},
+                {"label": "Default", "key": "^+%j", "color": "#E60073"},
+                {"label": "720p",    "key": "^+%k"},
             ],
         ],
     },
 
     {
-        "id": "other",
         "label": "Other",
         "rows": [
             [
-                {"id": "sourcematrix",  "label": "sMatrix", "key": "^+%m"},
-                {"id": "sourceprimar",  "label": "sPrimar", "key": "^+%p"},
+                {"label": "sMatrix", "key": "^+%m", "color": "#E64D00"},
+                {"label": "sPrimar", "key": "^+%p"},
             ],
             [
-                {"id": "deint",         "label": "deInt",   "key": "^+%d"},
-                {"id": "deintfield",    "label": "deIntF",  "key": "^+%f"},
-                {"id": "deintcontent",  "label": "deIntC",  "key": "^+%t"},
+                {"label": "deInt",   "key": "^+%d", "color": "#005CE6"},
+                {"label": "deIntF",  "key": "^+%f"},
+                {"label": "deIntC",  "key": "^+%t"},
             ],
             [
-                {"id": "rotateclock",   "label": "rClock",  "key": "^+%{LEFT}"},
-                {"id": "rotateclockr",  "label": "rClockR", "key": "^+%{RIGHT}"},
+                {"label": "rClock",  "key": "^+%{LEFT}"},
+                {"label": "rClockR", "key": "^+%{RIGHT}"},
             ],
         ],
     },

@@ -1,4 +1,4 @@
-<!-- madVR JS remote v0.010 -->
+<!-- madVR JS remote v0.013 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +14,11 @@
             font-weight: bold;
             padding: 0em;
             margin: 0em;
-            background: #E28E0E;
+            background-image: linear-gradient(to bottom, #D8870E, #F3AB3F);
+        }
+
+        .page {
+            height: 100vh;
         }
 
         .page ul {
@@ -43,21 +47,22 @@
             padding: 0.24em 0.1em;
             text-align: center;
             text-decoration: none;
-            color: darkgray;
-            background: #DC6E00;
+            color: #D9D9D9;
             border-radius: 10px 30px 0 0;
             transition: .2s;
         }
 
-        .page a:hover {
-            background: #EC6E00;
+        .tab {
+            background-image: linear-gradient(to bottom, #FF9933, #E67300);
+        }
+
+        .tab-active {
+            background-image: linear-gradient(to bottom, #E67300, #FF9933);
         }
 
         #content {
-            clear: both;
-            color: whitesmoke;
             padding: 0.2em 0.6em 0em 0.6em;
-            background: #E28E0E;
+            color: whitesmoke;
         }
 
         #content > .tab-content:target ~ .tab-content:last-child, #content > .tab-content {
@@ -70,38 +75,28 @@
 
         .row {
             margin-top: 0.6em;
-            display: block;
         }
 
         .btn {
-            text-align: center;
-            text-decoration: none;
-            border: 2px solid #1F628D;
             display: inline-block;
             padding: 0.5em;
             margin-right: 0.5em;
+            text-align: center;
+            text-decoration: none;
             border-radius: 1.2em;
-            -webkit-border-radius: 1.2em;
-            -moz-border-radius: 1.2em;
-            background: #3498DB;
-            background-image: -webkit-linear-gradient(top, #3498DB, #2980B9);
-            background-image: -moz-linear-gradient(top, #3498DB, #2980B9);
-            background-image: -ms-linear-gradient(top, #3498DB, #2980B9);
-            background-image: -o-linear-gradient(top, #3498DB, #2980B9);
-            background-image: linear-gradient(to bottom, #3498DB, #2980B9);
         }
 
         .btn:last-child {
             margin-right: 0em;
         }
 
-        .active {
-            background: #2980B9;
-            background-image: -webkit-linear-gradient(top, #2980B9, #3498DB);
-            background-image: -moz-linear-gradient(top, #2980B9, #3498DB);
-            background-image: -ms-linear-gradient(top, #2980B9, #3498DB);
-            background-image: -o-linear-gradient(top, #2980B9, #3498DB);
-            background-image: linear-gradient(to bottom, #2980B9, #3498DB);
+        .btn-bg {
+            background-image: linear-gradient(to bottom, #58A6DA, #2981BC);
+            border: 2px solid #216491;
+        }
+
+        .btn-bg-active {
+            background-image: linear-gradient(to bottom, #2981BC, #58A6DA);
         }
     </style>
 
@@ -117,6 +112,8 @@
             //window.scrollTo(0, 1);    // hides the navigation bar at the top
             generateButtons();
             addClickEventToButtons();
+            addClickEventToTabs();
+            selectDefaultTab();
         }, false);
 
         /**
@@ -125,15 +122,16 @@
          * @return void
          */
         function generateButtons() {
-            tabsHtml = '';
-            contentHtml = '';
+            var styleSheet = document.styleSheets[0];
+            var tabsHtml = '';
+            var contentHtml = '';
 
             // Go through tabs
             for (h = 0; h < mButtons.length; h++) {
                 var tab = mButtons[h];
                 var rows = tab.rows;
-                tabsHtml += '<li><a href="#' + tab.id + '">' + tab.label + '</a></li>';
-                contentHtml += '<div id="' + tab.id + '" class="tab-content">';
+                tabsHtml += '<li><a id="realtab' + h + '" href="#tab' + h + '" class="tab">' + tab.label + '</a></li>';
+                contentHtml += '<div id="tab' + h + '" class="tab-content">';
 
                 // Go through rows inside a tab
                 for (i = 0; i < rows.length; i++) {
@@ -143,7 +141,21 @@
                     // Go through buttons inside a row
                     for (j = 0; j < row.length; j++) {
                         var button = row[j];
-                        contentHtml += '<div id="' + button.id + '" class="btn" data-key="' + encodeURIComponent(button.key) + '">' + button.label + '</div>';
+                        var bgStyle = 'btn-bg';
+                        var aStyle = 'btn-bg-active';
+
+                        if (button.hasOwnProperty('color')) {
+                            var bgLighterColor = hexToHsl(button.color);
+                            var bgDarkerColor = hexToHsl(button.color, -10);
+                            bgStyle = bgStyle + h + i +j;
+                            aStyle = aStyle + h + i + j;
+
+                            // Create new css classes based on the color value of the button
+                            styleSheet.addRule('.' + bgStyle, 'background-image: linear-gradient(to bottom, ' + bgLighterColor + ', ' + button.color + '); border: 2px solid ' + bgDarkerColor + ';');
+                            styleSheet.addRule('.' + aStyle, 'background-image: linear-gradient(to bottom, ' + button.color + ', ' + bgLighterColor + ');');
+                        }
+
+                        contentHtml += '<div class="btn ' + bgStyle + '" data-key="' + encodeURIComponent(button.key) + '" data-aclass="' + aStyle + '">' + button.label + '</div>';
                     }
 
                     contentHtml += '</div>';
@@ -157,19 +169,59 @@
         }
 
         /**
-         * Add click event to buttons: add "active" class to the button and send keyboard shortcut to the server
+         * Convert HEX color into HSL string and modify its lightness
+         *
+         * @param string    hex     HEX color value in the form of "#123456"
+         * @param string    inc     Increment/decrement lightness in percentage
+         * @return string
+         */
+        function hexToHsl(hex, inc = 15) {
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+            var r = parseInt(result[1], 16);
+            var g = parseInt(result[2], 16);
+            var b = parseInt(result[3], 16);
+
+            r /= 255, g /= 255, b /= 255;
+            var max = Math.max(r, g, b), min = Math.min(r, g, b);
+            var h, s, l = (max + min) / 2;
+
+            if(max == min){
+                // achromatic
+                h = s = 0;
+            } else {
+                var d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+                switch(max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+
+            h = Math.round(h * 360);
+            s = Math.round(s * 100);
+            l = Math.min(Math.max(Math.round(l * 100 + inc), 0), 100);
+
+            return 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
+        }
+
+        /**
+         * Add click event to buttons: add "btn-bg-active*" class to the button and send keyboard shortcut to the server
          *
          * @return void
          */
         function addClickEventToButtons() {
             var buttons = document.getElementsByClassName('btn');
 
-            for ( var i=0; i < buttons.length; i++ ) {
+            for (var i=0; i < buttons.length; i++) {
                 buttons[i].addEventListener('click', function(e) {
                     e.preventDefault();
 
-                    // Add "active" class to the button
-                    this.className += ' active';
+                    // Add "btn-bg-active*" class to the button
+                    this.className += ' ' + this.dataset.aclass;
 
                     // Send keyboard shortcut to server
                     sendRequest(this, scriptURI + '?' + this.dataset.key);
@@ -178,7 +230,46 @@
         }
 
         /**
-         * Sends request to the server and removes "active" classes from a button upon success
+         * Add click event to tabs: add "tab-active" class to the tab and remove it from the rest
+         *
+         * @return void
+         */
+        function addClickEventToTabs() {
+            var tabs = document.getElementsByClassName('tab');
+            var aStyle = 'tab-active';
+
+            for (var i=0; i < tabs.length; i++) {
+                tabs[i].addEventListener('click', function(e) {
+                    // Remove "tab-active" class from all the tabs
+                    for (var j=0; j < tabs.length; j++) {
+                        tabs[j].className = tabs[j].className.replace(new RegExp('(?:^|\\s)' + aStyle + '(?!\\S)', 'g'), '');
+                    }
+
+                    // Add "tab-active" class to the current tab
+                    this.className += ' ' + aStyle;
+                }, false);
+            }
+        }
+
+        /**
+         * Select default tab according to hash value from URL or the first tab otherwise
+         *
+         * @return void
+         */
+        function selectDefaultTab() {
+            var hash = window.location.hash.substr(1);
+            var activeTab = document.getElementById('real' + hash);
+
+            if(typeof activeTab === 'undefined' || activeTab === null) {
+                var tabs = document.getElementsByClassName('tab');
+                activeTab = tabs[0];
+            }
+
+            activeTab.click();
+        }
+
+        /**
+         * Sends request to the server and removes "btn-bg-active*" classes from a button upon success or timeout
          *
          * @param string    obj     Button object
          * @param string    uri     Server URI
@@ -204,11 +295,13 @@
                 }
             }
 
+            // Handle successful request
             ajaxRequest.onreadystatechange = function() {
                 // Check response status from the server
                 if (ajaxRequest.readyState == 4 && ajaxRequest.status == 200) {
-                    // Remove "active" classes from the button
-                    obj.className = obj.className.replace(/(?:^|\s)active(?!\S)/g, '');
+                    // Clear timeout timer and remove "btn-bg-active*" classes from the button
+                    clearTimeout(ajaxRequestTimeout);
+                    obj.className = obj.className.replace(new RegExp('(?:^|\\s)' + obj.dataset.aclass + '(?!\\S)', 'g'), '');
                 }
             }
 
@@ -216,6 +309,16 @@
             ajaxRequest.open('GET', uri, true);
             ajaxRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
             ajaxRequest.send();
+
+            // Set 5 seconds timeout timer for request (e.g. due to unreachable server)
+            var ajaxRequestTimeout = setTimeout(ajaxTimeout, 5000);
+
+            // Handle timeout
+            function ajaxTimeout() {
+                // Abort request and remove "btn-bg-active" classes from the button
+                ajaxRequest.abort();
+                obj.className = obj.className.replace(new RegExp('(?:^|\\s)' + obj.dataset.aclass + '(?!\\S)', 'g'), '');
+            }
         }
     </script>
 </head>
