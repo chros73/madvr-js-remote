@@ -21,7 +21,7 @@ var mButtons = [
         "label": "Main",
         "rows": [
             [
-                {"label": "sLevel",  "key": "^+%i", "color": "#E67300"},
+                {"label": "sLevel",  "key": "^+%i", "color": "#99994D"},
                 {"label": "oLevel",  "key": "^+%y"},
             ],
             [

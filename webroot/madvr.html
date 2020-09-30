@@ -1,4 +1,4 @@
-<!-- madVR JS remote v0.013 -->
+<!-- madVR JS remote v0.014 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,7 +61,6 @@
         }
 
         #content {
-            padding: 0.2em 0.6em 0em 0.6em;
             color: whitesmoke;
         }
 
@@ -74,20 +73,22 @@
         }
 
         .row {
+            display: table;
+            table-layout: fixed;
+            width: 100%;
             margin-top: 0.6em;
+        }
+
+        .cell {
+            display: table-cell;
+            margin: 0;
+            text-align: center;
         }
 
         .btn {
             display: inline-block;
             padding: 0.5em;
-            margin-right: 0.5em;
-            text-align: center;
-            text-decoration: none;
             border-radius: 1.2em;
-        }
-
-        .btn:last-child {
-            margin-right: 0em;
         }
 
         .btn-bg {
@@ -155,7 +156,7 @@
                             styleSheet.addRule('.' + aStyle, 'background-image: linear-gradient(to bottom, ' + button.color + ', ' + bgLighterColor + ');');
                         }
 
-                        contentHtml += '<div class="btn ' + bgStyle + '" data-key="' + encodeURIComponent(button.key) + '" data-aclass="' + aStyle + '">' + button.label + '</div>';
+                        contentHtml += '<div class="cell"><div class="btn ' + bgStyle + '" data-key="' + encodeURIComponent(button.key) + '" data-aclass="' + aStyle + '">' + button.label + '</div></div>';
                     }
 
                     contentHtml += '</div>';
