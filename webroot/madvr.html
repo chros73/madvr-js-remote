@@ -14,7 +14,7 @@
             font-weight: bold;
             padding: 0em;
             margin: 0em;
-            background-image: linear-gradient(to bottom, #D8870E, #F3AB3F);
+            background-image: linear-gradient(to bottom, #C0780C, #D8870E);
         }
 
         .page {
@@ -156,7 +156,7 @@
                             styleSheet.addRule('.' + aStyle, 'background-image: linear-gradient(to bottom, ' + button.color + ', ' + bgLighterColor + ');');
                         }
 
-                        contentHtml += '<div class="cell"><div class="btn ' + bgStyle + '" data-key="' + encodeURIComponent(button.key) + '" data-aclass="' + aStyle + '">' + button.label + '</div></div>';
+                        contentHtml += '<div class="cell"><div class="btn ' + bgStyle + '" data-val="' + encodeURIComponent(button.type + "=" + button.val) + '" data-aclass="' + aStyle + '">' + button.label + '</div></div>';
                     }
 
                     contentHtml += '</div>';
@@ -225,7 +225,7 @@
                     this.className += ' ' + this.dataset.aclass;
 
                     // Send keyboard shortcut to server
-                    sendRequest(this, scriptURI + '?' + this.dataset.key);
+                    sendRequest(this, scriptURI + '?' + this.dataset.val);
                 }, false);
             }
         }
